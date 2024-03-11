@@ -18,7 +18,6 @@ type ball struct {
 	number int
 	num    int
 	color  color.NRGBA
-	up     bool
 	shoot  bool
 }
 
@@ -31,7 +30,6 @@ func (b *ball) first() ball {
 	b.number = 0
 	b.num = 0
 	b.color = color.NRGBA{0x00, 0x40, 0x80, 0xff}
-	b.up = true
 	b.shoot = false
 	return *b
 }

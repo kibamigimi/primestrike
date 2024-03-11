@@ -17,12 +17,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-var press_x = 0
-var press_y = 0
-var level = 1
-var score = 0
+var press_x int
+var press_y int
+var score int
 
 type status int
+
+var level = 1
 
 var ballprime = []int{2, 3, 5, 7}
 var drawlineflag = false
@@ -32,7 +33,7 @@ const (
 	statusInit status = iota
 	statusSetup
 	statusPlay
-	statusJudge
+	statusFin
 )
 
 type game struct {
@@ -90,7 +91,7 @@ func (g *game) Update() error {
 		}
 	case statusSetup: //ゲーム画面
 		if g.timer >= 5000 {
-			g.status = statusJudge
+			g.status = statusFin
 		}
 		var keys []ebiten.Key
 		keys = inpututil.AppendJustPressedKeys(keys)
@@ -228,7 +229,7 @@ func (g *game) Update() error {
 			}
 		}
 
-	case statusJudge:
+	case statusFin:
 		var keys []ebiten.Key
 		keys = inpututil.AppendJustReleasedKeys(keys)
 		if len(keys) != 1 {
@@ -319,7 +320,7 @@ func (g *game) Draw(screen *ebiten.Image) {
 		}
 		text.Draw(screen, fmt.Sprint("score:", score), g.font, 320, 550, color.Black)
 	}
-	if g.status == statusJudge {
+	if g.status == statusFin {
 		text.Draw(screen, fmt.Sprint("score:", score), g.font, 320, 300, color.Black)
 	}
 
@@ -347,10 +348,12 @@ func (g *game) setopen(screen *ebiten.Image) (*ebiten.Image, error) {
 	}
 	return img, nil
 }
+
 func (g *game) culscore(score int) int {
 	score += level + 2*100 - g.count*30
 	return score
 }
+
 func fontset() font.Face {
 	tt, err := opentype.Parse(fonts.MPlus1pRegular_ttf)
 	const dpi = 72
@@ -360,6 +363,7 @@ func fontset() font.Face {
 		Hinting: font.HintingVertical,
 	})
 	if err != nil {
+		return nil
 	}
 	return mplusNormalFont
 }
